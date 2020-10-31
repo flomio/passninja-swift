@@ -13,7 +13,7 @@ var passApiKey = ""
 
 public class PassNinja {
     
-    init(accountId: String, apiKey: String) {
+    public static func initWith(accountId: String, apiKey: String) {
         passAccountId = accountId
         passApiKey = apiKey
     }
