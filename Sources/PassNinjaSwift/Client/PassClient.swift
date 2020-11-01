@@ -10,9 +10,10 @@ import Foundation
 import Moya
 import Alamofire
 
-public class PassClient {
+open class PassClient {
     
-    let provider = MoyaProvider<EndPoint>()
+    public static let shared = PassClient()
+    fileprivate let provider = MoyaProvider<EndPoint>()
     
     public func createPass(pass: PassRequest, onSuccess: @escaping (_ response: Pass) -> Void, onError: @escaping (_ error: PassNinjaError?) -> Void) {
         let isValidRequest = validatePass(passType: pass.passType, endPointType: .Create)
@@ -154,7 +155,7 @@ public class PassClient {
     }
 }
 
-extension PassClient {
+fileprivate extension PassClient {
     func validatePass(passType: String, serialNumber: String? = nil, endPointType: EndpointType) -> Bool {
         var result = false
         switch endPointType {

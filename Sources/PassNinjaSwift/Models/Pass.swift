@@ -10,8 +10,8 @@ import Foundation
 
 public struct PassNinjaError : Codable {
     
-    let message : String?
-    let statusCode : Int?
+    public let message : String?
+    public let statusCode : Int?
     
     enum CodingKeys: String, CodingKey {
         case message = "message"
@@ -25,11 +25,11 @@ public struct PassNinjaError : Codable {
 }
 
 public struct PassRequest : Codable {
-    let passType : String
-    let serialNumber: String?
-    let pass : CreatePass?
+    public let passType : String
+    public let serialNumber: String?
+    public let pass : CreatePass?
     
-    init(passType: String, pass: CreatePass, serialNumber: String? = nil) {
+    public init(passType: String, pass: CreatePass, serialNumber: String? = nil) {
         self.passType = passType
         self.pass = pass
         self.serialNumber = serialNumber
@@ -60,10 +60,10 @@ public struct CreatePass : Codable {
 
 public struct Pass : Codable {
     
-    let pass : PassResponse?
-    let passType : String?
-    let serialNumber : String?
-    let urls : PassUrl?
+    public let pass : PassResponse?
+    public let passType : String?
+    public let serialNumber : String?
+    public let urls : PassUrl?
     
     enum CodingKeys: String, CodingKey {
         case pass = "pass"
@@ -79,14 +79,13 @@ public struct Pass : Codable {
         serialNumber = try values.decodeIfPresent(String.self, forKey: .serialNumber)
         urls = try values.decodeIfPresent(PassUrl.self, forKey: .urls)
     }
-    
 }
 
 public struct PassUrl : Codable {
     
-    let apple : String?
-    let google : String?
-    let landing : String?
+    public let apple : String?
+    public let google : String?
+    public let landing : String?
     
     enum CodingKeys: String, CodingKey {
         case apple = "apple"
@@ -100,19 +99,18 @@ public struct PassUrl : Codable {
         google = try values.decodeIfPresent(String.self, forKey: .google)
         landing = try values.decodeIfPresent(String.self, forKey: .landing)
     }
-    
 }
 
 public struct PassResponse : Codable {
     
-    let barcode : String?
-    let descriptionField : String?
-    let expiration : String?
-    let logoText : String?
-    let loyaltyLevel : String?
-    let memberName : String?
-    let organizationName : String?
-    let specialOffer : String?
+    public let barcode : String?
+    public let descriptionField : String?
+    public let expiration : String?
+    public let logoText : String?
+    public let loyaltyLevel : String?
+    public let memberName : String?
+    public let organizationName : String?
+    public let specialOffer : String?
     
     enum CodingKeys: String, CodingKey {
         case barcode = "barcode"
@@ -136,5 +134,4 @@ public struct PassResponse : Codable {
         organizationName = try values.decodeIfPresent(String.self, forKey: .organizationName)
         specialOffer = try values.decodeIfPresent(String.self, forKey: .specialOffer)
     }
-    
 }
