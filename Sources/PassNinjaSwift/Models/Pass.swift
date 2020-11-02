@@ -29,7 +29,9 @@ public struct PassRequest : Codable {
     public let serialNumber: String?
     public let pass : CreatePass?
     
-    public init(passType: String, pass: CreatePass, serialNumber: String? = nil) {
+    public init(passType: String,
+                pass: CreatePass,
+                serialNumber: String? = nil) {
         self.passType = passType
         self.pass = pass
         self.serialNumber = serialNumber
@@ -46,7 +48,14 @@ public struct CreatePass : Codable {
     let loyaltyLevel : String?
     let barcode : String?
     
-    public init(logoText: String, organizationName: String, description: String, expiration: String, memberName: String, specialOffer: String, loyaltyLevel: String, barcode: String) {
+    public init(logoText: String? = nil,
+                organizationName: String? = nil,
+                description: String? = nil,
+                expiration: String? = nil,
+                memberName: String? = nil,
+                specialOffer: String? = nil,
+                loyaltyLevel: String? = nil,
+                barcode: String? = nil) {
         self.logoText = logoText
         self.organizationName = organizationName
         self.description = description

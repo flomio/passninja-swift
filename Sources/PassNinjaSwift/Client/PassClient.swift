@@ -15,7 +15,9 @@ open class PassClient {
     public static let shared = PassClient()
     fileprivate let provider = MoyaProvider<EndPoint>()
     
-    public func createPass(pass: PassRequest, onSuccess: @escaping (_ response: Pass) -> Void, onError: @escaping (_ error: PassNinjaError?) -> Void) {
+    public func createPass(pass: PassRequest,
+                           onSuccess: @escaping (_ response: Pass) -> Void,
+                           onError: @escaping (_ error: PassNinjaError?) -> Void) {
         let isValidRequest = validatePass(passType: pass.passType, endPointType: .Create)
         var error: PassNinjaError?
         if let message = checkMissingAccountIdanApiKey() {
@@ -48,7 +50,9 @@ open class PassClient {
         }
     }
     
-    public func getPass(passType: String, serialNumber: String, onSuccess: @escaping (_ response: Pass) -> Void, onError: @escaping (_ error: PassNinjaError?) -> Void) {
+    public func getPass(passType: String, serialNumber: String,
+                        onSuccess: @escaping (_ response: Pass) -> Void,
+                        onError: @escaping (_ error: PassNinjaError?) -> Void) {
         let isValidRequest = validatePass(passType: passType, serialNumber: serialNumber, endPointType: .Get)
         var error: PassNinjaError?
         if let message = checkMissingAccountIdanApiKey() {
@@ -81,7 +85,9 @@ open class PassClient {
         }
     }
     
-    public func putPass(pass: PassRequest, onSuccess: @escaping (_ response: Pass) -> Void, onError: @escaping (_ error: PassNinjaError?) -> Void) {
+    public func putPass(pass: PassRequest,
+                        onSuccess: @escaping (_ response: Pass) -> Void,
+                        onError: @escaping (_ error: PassNinjaError?) -> Void) {
         let isValidRequest = validatePass(passType: pass.passType, endPointType: .Put)
         var error: PassNinjaError?
         if let message = checkMissingAccountIdanApiKey() {
@@ -114,7 +120,11 @@ open class PassClient {
         }
     }
     
-    public func deletePass(passType: String, serialNumber: String, clientPassData: [String: Any], onSuccess: @escaping () -> Void, onError: @escaping (_ error: PassNinjaError?) -> Void) {
+    public func deletePass(passType: String,
+                           serialNumber: String,
+                           clientPassData: [String: Any],
+                           onSuccess: @escaping () -> Void,
+                           onError: @escaping (_ error: PassNinjaError?) -> Void) {
         let isValidRequest = validatePass(passType: passType, endPointType: .Delete)
         var error: PassNinjaError?
         if let message = checkMissingAccountIdanApiKey() {
@@ -156,7 +166,9 @@ open class PassClient {
 }
 
 fileprivate extension PassClient {
-    func validatePass(passType: String, serialNumber: String? = nil, endPointType: EndpointType) -> Bool {
+    func validatePass(passType: String,
+                      serialNumber: String? = nil,
+                      endPointType: EndpointType) -> Bool {
         var result = false
         switch endPointType {
         case .Create:
