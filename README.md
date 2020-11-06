@@ -68,7 +68,7 @@ deleting passes via the PassNinja api. The methods are outlined below.
 ### Create
 
 ```swift
-PassClient.shared.createPass(pass: PassRequest(passType: "demo.coupon", pass: CreatePass(logoText: "logo", description: "description")), onSuccess: { (pass) in
+PassClient.shared.createPass(pass: PassRequest(passType: "demo.coupon", pass: ["passTitle": "Example PassTitle Value", "logoText": "Example LogoText Value", "organizationName": "Example OrganizationName Value", "description": "Example description Value", "expiration": "Example expiration Value", "memberName": "Example memberName Value", "specialOffer": "Example specialOffer Value", "loyaltyLevel": "Example loyaltyLevel Value", "barcode": "Example barcode Value", "eventDate": "Example eventDate Value"]), onSuccess: { (pass) in
     print(pass.urls as Any)
     print(pass.passType as Any)
     print(pass.serialNumber as Any)
@@ -83,7 +83,7 @@ PassClient.shared.createPass(pass: PassRequest(passType: "demo.coupon", pass: Cr
 ### Get
 
 ```swift
-PassClient.shared.getPass(passType: "demo.coupon", serialNumber: pass?.serialNumber ?? "", onSuccess: { (pass) in
+PassClient.shared.getPass(passType: "demo.coupon", serialNumber: "#Your pass serial number", onSuccess: { (pass) in
     print(pass.urls as Any)
     print(pass.passType as Any)
     print(pass.serialNumber as Any)
@@ -97,8 +97,7 @@ PassClient.shared.getPass(passType: "demo.coupon", serialNumber: pass?.serialNum
 ### Update
 
 ```swift
-PassClient.shared.putPass(pass: PassRequest(passType: "demo.coupon", pass: CreatePass(logoText: "logo", description: "description", expiration: "expiration")), onSuccess: { (pass) in
-    self.pass = pass
+PassClient.shared.putPass(pass: PassRequest(passType: "demo.coupon", pass: ["passTitle": "Example passTitleValue", "logoText": "Example logoTextValue", "organizationName": "Example organizationNameValue", "description": "Example descriptionValue"], serialNumber: "#Your pass serial number"), onSuccess: { (pass) in
     print(pass.urls as Any)
     print(pass.passType as Any)
     print(pass.serialNumber as Any)

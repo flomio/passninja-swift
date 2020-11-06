@@ -27,10 +27,10 @@ public struct PassNinjaError : Codable {
 public struct PassRequest : Codable {
     public let passType : String
     public let serialNumber: String?
-    public let pass : CreatePass?
+    public let pass : [String: String]?
     
     public init(passType: String,
-                pass: CreatePass,
+                pass: [String: String]?,
                 serialNumber: String? = nil) {
         self.passType = passType
         self.pass = pass

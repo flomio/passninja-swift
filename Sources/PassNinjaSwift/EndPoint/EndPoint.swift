@@ -58,13 +58,23 @@ extension EndPoint : TargetType{
 
     var parameters: [String: Any]? {
         switch self {
-        case .createPass:
-            return [:]
+        case .createPass(let pass):
+            if let passParams = pass.pass {
+                let params = ["passType": pass.passType, "pass": passParams] as [String : Any]
+                return params
+            }else {
+                return [:]
+            }
         case .getPass(let passType, let serialNumber):
             return ["passType": passType,
                     "serialNumber": serialNumber]
-        case .putPass:
-            return [:]
+        case .putPass(let pass):
+            if let passParams = pass.pass {
+                let params = ["passType": pass.passType, "serialNumber": pass.serialNumber, "pass": passParams] as [String : Any]
+                return params
+            }else {
+                return [:]
+            }
         case .deletePass(let passType, let serialNumber):
             return ["passType": passType,
                     "serialNumber": serialNumber]
@@ -73,24 +83,22 @@ extension EndPoint : TargetType{
 
     var task: Task {
         switch self {
-        case .createPass(let pass):
+        case .createPass:
             var parameterData = Data()
             do {
-                parameterData = try JSONEncoder().encode(pass)
+                parameterData = try JSONSerialization.data(withJSONObject: parameters!, options: [])
             } catch let error {
               print("Parameters not converted with error: \(error)")
             }
             return .requestData(parameterData)
-            
         case .putPass(let pass):
             var parameterData = Data()
             do {
-                parameterData = try JSONEncoder().encode(pass.pass)
+                parameterData = try JSONSerialization.data(withJSONObject: parameters!, options: [])
             } catch let error {
               print("Parameters not converted with error: \(error)")
             }
             return .requestData(parameterData)
-            
         case .getPass, .deletePass:
             return .requestPlain
         }
