@@ -144,3 +144,20 @@ public struct PassResponse : Codable {
         specialOffer = try values.decodeIfPresent(String.self, forKey: .specialOffer)
     }
 }
+
+public struct RequiredPassKey : Codable {
+    
+    public let keys : [String]?
+    public let passType : String?
+    
+    enum CodingKeys: String, CodingKey {
+        case keys = "keys"
+        case passType = "passType"
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        keys = try values.decodeIfPresent([String].self, forKey: .keys)
+        passType = try values.decodeIfPresent(String.self, forKey: .passType)
+    }
+}

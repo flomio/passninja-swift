@@ -14,6 +14,7 @@ enum EndPoint{
     case getPass(passType: String, serialNumber: String)
     case putPass(pass: PassRequest)
     case deletePass(passType: String, serialNumber: String)
+    case getPassTypeKeys(passType: String)
 }
 
 extension EndPoint : TargetType{
@@ -21,7 +22,7 @@ extension EndPoint : TargetType{
     var parameterEncoding: ParameterEncoding {
         return JSONEncoding.default
     }
-
+    
     var baseURL: URL {
         return URL(string: "https://api.passninja.com/v1")!
     }
@@ -36,6 +37,8 @@ extension EndPoint : TargetType{
             return "/passes/\(pass.passType)/\(pass.serialNumber!)"
         case .deletePass(let passType, let serialNumber):
             return "/passes/\(passType)/\(serialNumber)"
+        case .getPassTypeKeys(let passType):
+            return "/passtypes/keys/\(passType)"
         }
     }
     
@@ -43,7 +46,7 @@ extension EndPoint : TargetType{
         switch self {
         case .createPass:
             return .post
-        case .getPass:
+        case .getPass, .getPassTypeKeys:
             return .get
         case .putPass:
             return .put
@@ -55,7 +58,7 @@ extension EndPoint : TargetType{
     var sampleData: Data {
         return Data()
     }
-
+    
     var parameters: [String: Any]? {
         switch self {
         case .createPass(let pass):
@@ -70,7 +73,7 @@ extension EndPoint : TargetType{
                     "serialNumber": serialNumber]
         case .putPass(let pass):
             if let passParams = pass.pass {
-                let params = ["passType": pass.passType, "serialNumber": pass.serialNumber, "pass": passParams] as [String : Any]
+                let params = ["passType": pass.passType, "serialNumber": pass.serialNumber as Any, "pass": passParams] as [String : Any]
                 return params
             }else {
                 return [:]
@@ -78,9 +81,11 @@ extension EndPoint : TargetType{
         case .deletePass(let passType, let serialNumber):
             return ["passType": passType,
                     "serialNumber": serialNumber]
+        case .getPassTypeKeys:
+            return nil
         }
     }
-
+    
     var task: Task {
         switch self {
         case .createPass:
@@ -88,25 +93,25 @@ extension EndPoint : TargetType{
             do {
                 parameterData = try JSONSerialization.data(withJSONObject: parameters!, options: [])
             } catch let error {
-              print("Parameters not converted with error: \(error)")
+                print("Parameters not converted with error: \(error)")
             }
             return .requestData(parameterData)
-        case .putPass(let pass):
+        case .putPass:
             var parameterData = Data()
             do {
                 parameterData = try JSONSerialization.data(withJSONObject: parameters!, options: [])
             } catch let error {
-              print("Parameters not converted with error: \(error)")
+                print("Parameters not converted with error: \(error)")
             }
             return .requestData(parameterData)
-        case .getPass, .deletePass:
+        case .getPass, .deletePass, .getPassTypeKeys:
             return .requestPlain
         }
     }
-
+    
     var headers: [String : String]? {
         switch  self {
-        case .createPass, .getPass, .putPass, .deletePass:
+        case .createPass, .getPass, .putPass, .deletePass, .getPassTypeKeys:
             var header = ["Content-Type": "application/json"]
             header["x-account-id"] = passAccountId
             header["x-api-key"] = passApiKey

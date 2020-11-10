@@ -24,25 +24,38 @@ open class PassClient {
             error = try! PassNinjaError(message: message, statusCode: 500)
         }else if !isValidRequest{
             error = try! PassNinjaError(message: "Please enter a valid pass type", statusCode: 500)
-        }else {
-            provider.request(.createPass(pass: pass)) { result in
-                switch result{
-                case .success(let response):
-                    do {
-                        print(try response.mapJSON())
-                        if response.statusCode == 200 {
-                            let pass = try JSONDecoder().decode(Pass.self, from: response.data)
-                            onSuccess(pass)
-                        } else {
-                            let error = try JSONDecoder().decode(PassNinjaError.self, from: response.data)
-                            onError(error)
-                        }
-                    } catch {
-                        print(error.localizedDescription)
-                    }
-                case.failure(let error):
-                    print(error.localizedDescription)
+        }else{
+            getPassTypeRequiredKeys(passType: pass.passType, onSuccess: { (requirePassKey) in
+                var mergedKeys = [String: String]()
+                for i in requirePassKey.keys ?? [] {
+                    let test1 = pass.pass?.filter({$0.key == i})
+                    mergedKeys = mergedKeys.merging(test1 ?? [:]) { $1 }
                 }
+                let keyArry = Array(mergedKeys.keys)
+                if keyArry.sorted() == requirePassKey.keys?.sorted() {
+                    self.provider.request(.createPass(pass: pass)) { result in
+                        switch result{
+                        case .success(let response):
+                            do {
+                                if response.statusCode == 200 {
+                                    let pass = try JSONDecoder().decode(Pass.self, from: response.data)
+                                    onSuccess(pass)
+                                } else {
+                                    let error = try JSONDecoder().decode(PassNinjaError.self, from: response.data)
+                                    onError(error)
+                                }
+                            } catch {
+                                onError(commonError())
+                            }
+                        case.failure:
+                            onError(commonError())
+                        }
+                    }
+                }else {
+                    onError(try! PassNinjaError(message: "Please enter valid pass keys", statusCode: 500))
+                }
+            }) { (error) in
+                onError(error)
             }
         }
         if let error = error {
@@ -64,7 +77,6 @@ open class PassClient {
                 switch result{
                 case .success(let response):
                     do {
-                        print(try response.mapJSON())
                         if response.statusCode == 200 {
                             let pass = try JSONDecoder().decode(Pass.self, from: response.data)
                             onSuccess(pass)
@@ -73,10 +85,10 @@ open class PassClient {
                             onError(error)
                         }
                     } catch {
-                        print(error.localizedDescription)
+                        onError(commonError())
                     }
-                case.failure(let error):
-                    print(error.localizedDescription)
+                case.failure:
+                    onError(commonError())
                 }
             }
         }
@@ -88,7 +100,7 @@ open class PassClient {
     public func putPass(pass: PassRequest,
                         onSuccess: @escaping (_ response: Pass) -> Void,
                         onError: @escaping (_ error: PassNinjaError?) -> Void) {
-        let isValidRequest = validatePass(passType: pass.passType, endPointType: .Put)
+        let isValidRequest = validatePass(passType: pass.passType, serialNumber: pass.serialNumber,endPointType: .Put)
         var error: PassNinjaError?
         if let message = checkMissingAccountIdanApiKey() {
             error = try! PassNinjaError(message: message, statusCode: 500)
@@ -99,7 +111,6 @@ open class PassClient {
                 switch result{
                 case .success(let response):
                     do {
-                        print(try response.mapJSON())
                         if response.statusCode == 200 {
                             let pass = try JSONDecoder().decode(Pass.self, from: response.data)
                             onSuccess(pass)
@@ -108,10 +119,10 @@ open class PassClient {
                             onError(error)
                         }
                     } catch {
-                        print(error.localizedDescription)
+                        onError(commonError())
                     }
-                case.failure(let error):
-                    print(error.localizedDescription)
+                case.failure:
+                    onError(commonError())
                 }
             }
         }
@@ -136,7 +147,6 @@ open class PassClient {
                 switch result{
                 case .success(let response):
                     do {
-                        print(try response.mapJSON())
                         if response.statusCode == 200 {
                             onSuccess()
                         } else {
@@ -144,15 +154,38 @@ open class PassClient {
                             onError(Json)
                         }
                     } catch {
-                        print(error.localizedDescription)
+                        onError(commonError())
                     }
-                case.failure(let error):
-                    print(error.localizedDescription)
+                case.failure:
+                    onError(commonError())
                 }
             }
         }
         if let error = error {
             onError(error)
+        }
+    }
+    
+    public func getPassTypeRequiredKeys(passType: String,
+                                        onSuccess: @escaping (_ response: RequiredPassKey) -> Void,
+                                        onError: @escaping (_ error: PassNinjaError?) -> Void) {
+        provider.request(.getPassTypeKeys(passType: passType)) { result in
+            switch result{
+            case .success(let response):
+                do {
+                    if response.statusCode == 200 {
+                        let pass = try JSONDecoder().decode(RequiredPassKey.self, from: response.data)
+                        onSuccess(pass)
+                    } else {
+                        let error = try JSONDecoder().decode(PassNinjaError.self, from: response.data)
+                        onError(error)
+                    }
+                } catch {
+                    onError(commonError())
+                }
+            case.failure:
+                onError(commonError())
+            }
         }
     }
     
@@ -174,11 +207,17 @@ fileprivate extension PassClient {
         case .Create:
             result = (passType != "") ? true : false
         case .Get:
-            result = (passType != "" && serialNumber != "") ? true : false
+            if let serialNumber = serialNumber {
+                result = (passType != "" && serialNumber != "") ? true : false
+            }
         case .Put:
+            if let serialNumber = serialNumber {
+                result = (passType != "" && serialNumber != "") ? true : false
+            }
+        case .Delete:
             result = (passType != "" && serialNumber != "") ? true : false
-        case . Delete:
-            result = (passType != "" && serialNumber != "") ? true : false
+        case .GetPassType:
+            result = (passType != "") ? true : false
         }
         return result
     }
@@ -189,4 +228,9 @@ public enum EndpointType {
     case Get
     case Put
     case Delete
+    case GetPassType
+}
+
+func commonError() -> PassNinjaError {
+    return try! PassNinjaError(message: "Invalid JSON Error", statusCode: 403)
 }
