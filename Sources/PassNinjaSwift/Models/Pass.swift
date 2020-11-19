@@ -11,16 +11,19 @@ import Foundation
 public struct PassNinjaError : Codable {
     
     public let message : String?
+    public let error : String?
     public let statusCode : Int?
     
     enum CodingKeys: String, CodingKey {
         case message = "message"
         case statusCode = "StatusCode"
+        case error = "error"
     }
     
-    init(message: String, statusCode: Int) throws {
+    init(message: String, error: String? = nil, statusCode: Int) throws {
         self.message = message
         self.statusCode = statusCode
+        self.error = error
     }
 }
 
