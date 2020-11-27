@@ -26,13 +26,12 @@ open class PassClient {
             error = try! PassNinjaError(message: "Please enter a valid pass type", statusCode: 500)
         }else{
             getPassTypeRequiredKeys(passType: pass.passType, onSuccess: { (requirePassKey) in
-                var mergedKeys = [String: String]()
-                for i in requirePassKey.keys ?? [] {
-                    let test1 = pass.pass?.filter({$0.key == i})
-                    mergedKeys = mergedKeys.merging(test1 ?? [:]) { $1 }
-                }
-                let keyArry = Array(mergedKeys.keys)
-                if keyArry.sorted() == requirePassKey.keys?.sorted() {
+                let requirePassKeySet:Set<String> = Set(requirePassKey.keys ?? [])
+                let passKeys = pass.pass?.map({ $0.key })
+                let passKeySet:Set<String> = Set(passKeys ?? [])
+                let intersection = requirePassKeySet.intersection(passKeySet)
+                
+                if intersection.count >= passKeys?.count ?? 0 || requirePassKeySet.count == 0 {
                     self.provider.request(.createPass(pass: pass)) { result in
                         switch result{
                         case .success(let response):
