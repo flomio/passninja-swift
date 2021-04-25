@@ -57,8 +57,8 @@ through your PassNinja account and don't hesitate to contact
 [PassNinja](https://passninja.com) with our built in chat system if you'd like
 to subscribe and create your own custom pass type(s).
 
-For more information on how to use `passninja-java` once it loads, please refer to
-the [PassNinja JS API reference](https://passninja.com/docs/js)
+For more information on how to use `passninja-swift` once it loads, please refer to
+the [PassNinja Swift API reference](https://passninja.com/docs/swift)
 
 ## `PassNinjaClientMethods`
 
@@ -68,7 +68,7 @@ deleting passes via the PassNinja api. The methods are outlined below.
 ### Create
 
 ```swift
-PassClient.shared.createPass(pass: PassRequest(passType: "demo.coupon", pass: ["passTitle": "Example PassTitle Value", "logoText": "Example LogoText Value", "organizationName": "Example OrganizationName Value", "description": "Example description Value", "expiration": "Example expiration Value", "memberName": "Example memberName Value", "specialOffer": "Example specialOffer Value", "loyaltyLevel": "Example loyaltyLevel Value", "barcode": "Example barcode Value", "eventDate": "Example eventDate Value"]), onSuccess: { (pass) in
+PassClient.shared.createPass(pass: PassRequest(passType: "demo.coupon", pass: [discount: '50%', memberName: 'John']), onSuccess: { (pass) in
     print(pass.urls as Any)
     print(pass.passType as Any)
     print(pass.serialNumber as Any)
