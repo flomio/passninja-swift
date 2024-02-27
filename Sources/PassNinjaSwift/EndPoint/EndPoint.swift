@@ -29,6 +29,8 @@ extension EndPoint : TargetType{
     
     var path: String {
         switch self {
+        case .getPassTemplate:
+            return "/pass_templates/\(passType)"
         case .createPass:
             return "/passes"
         case .getPass(let passType, let serialNumber):
@@ -46,7 +48,7 @@ extension EndPoint : TargetType{
         switch self {
         case .createPass:
             return .post
-        case .getPass, .getPassTypeKeys:
+        case .getPass, .getPassTypeKeys, .getPassTemplate:
             return .get
         case .putPass:
             return .put
@@ -71,6 +73,8 @@ extension EndPoint : TargetType{
         case .getPass(let passType, let serialNumber):
             return ["passType": passType,
                     "serialNumber": serialNumber]
+        case .getPassTemplate(let passType):
+            return ["passType": passType]
         case .putPass(let pass):
             if let passParams = pass.pass {
                 let params = ["passType": pass.passType, "serialNumber": pass.serialNumber as Any, "pass": passParams] as [String : Any]
@@ -104,14 +108,14 @@ extension EndPoint : TargetType{
                 print("Parameters not converted with error: \(error)")
             }
             return .requestData(parameterData)
-        case .getPass, .deletePass, .getPassTypeKeys:
+        case .getPass, .deletePass, .getPassTypeKeys, .getPassTemplate:
             return .requestPlain
         }
     }
     
     var headers: [String : String]? {
         switch  self {
-        case .createPass, .getPass, .putPass, .deletePass, .getPassTypeKeys:
+        case .createPass, .getPass, .putPass, .deletePass, .getPassTypeKeys, .getPassTemplate:
             var header = ["Content-Type": "application/json"]
             header["x-account-id"] = passAccountId
             header["x-api-key"] = passApiKey
