@@ -94,19 +94,6 @@ PassClient.shared.getPass(passType: "demo.coupon", serialNumber: "#Your pass ser
 }
 ```
 
-### Get Pass Template Details
-
-```swift
-PassClient.shared.getPassTemplate(passType: "demo.coupon", onSuccess: { (passTemplate) in
-    print(pass.id as Any)
-    print(pass.passTypeId as Any)
-    print(pass.name as Any)
-}) { (error) in
-    print(error as Any)
-}
-
-```
-
 ### Update
 
 ```swift

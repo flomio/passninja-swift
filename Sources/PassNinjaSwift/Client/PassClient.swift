@@ -15,31 +15,6 @@ open class PassClient {
     public static let shared = PassClient()
     fileprivate let provider = MoyaProvider<EndPoint>()
     
-    public func getPassTemplate(passType: String, onSuccess: @escaping (_ response: PassTemplate) -> Void,
-                        onError: @escaping (_ error: PassNinjaError?) -> Void) {
-        provider.request(.getPassTemplate(passType: passType)) { result in
-            switch result{
-            case .success(let response):
-                do {
-                    if response.statusCode == 200 {
-                        let pass = try JSONDecoder().decode(PassTemplate.self, from: response.data)
-                        onSuccess(pass)
-                    } else {
-                        let error = try JSONDecoder().decode(PassNinjaError.self, from: response.data)
-                        onError(error)
-                    }
-                } catch {
-                    onError(commonError())
-                }
-            case.failure:
-                onError(commonError())
-            }
-        }
-        if let error = error {
-            onError(error)
-        }
-    }
-
     public func createPass(pass: PassRequest,
                            onSuccess: @escaping (_ response: Pass) -> Void,
                            onError: @escaping (_ error: PassNinjaError?) -> Void) {
