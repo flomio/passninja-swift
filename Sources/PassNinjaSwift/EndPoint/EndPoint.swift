@@ -30,6 +30,7 @@ extension EndPoint : TargetType{
     var path: String {
         switch self {
         case .getPassTemplate:
+            let passType
             return "/pass_templates/\(passType)"
         case .createPass:
             return "/passes"
