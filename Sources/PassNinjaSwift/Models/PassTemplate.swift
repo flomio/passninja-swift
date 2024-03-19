@@ -8,8 +8,9 @@
 
 import Foundation
 
-public struct Pass : Codable {
+public struct PassTemplate : Codable {
     
+    public let passType : String?
     public let id : String?
     public let name : String?
     public let passTypeId : String?
@@ -19,6 +20,7 @@ public struct Pass : Codable {
     public let installedPassCount : Int?
     
     enum CodingKeys: String, CodingKey {
+        case passType = "pass_type"
         case id = "id"
         case name = "name"
         case passTypeId = "pass_type_id"
