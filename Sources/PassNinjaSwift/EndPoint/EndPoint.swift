@@ -11,6 +11,7 @@ import Moya
 
 enum EndPoint{
     case createPass(pass: PassRequest)
+    case getPassTemplate(passType: String)
     case getPass(passType: String, serialNumber: String)
     case putPass(pass: PassRequest)
     case deletePass(passType: String, serialNumber: String)
@@ -29,8 +30,7 @@ extension EndPoint : TargetType{
     
     var path: String {
         switch self {
-        case .getPassTemplate:
-            let passType
+        case .getPassTemplate(let passType):
             return "/pass_templates/\(passType)"
         case .createPass:
             return "/passes"
