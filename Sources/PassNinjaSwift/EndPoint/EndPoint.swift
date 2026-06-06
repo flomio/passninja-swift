@@ -66,7 +66,7 @@ extension EndPoint : TargetType{
         switch self {
         case .createPass(let pass):
             if let passParams = pass.pass {
-                let params = ["passType": pass.passType, "pass": passParams] as [String : Any]
+                let params = ["passTemplate": pass.passType, "pass": passParams] as [String : Any]
                 return params
             }else {
                 return [:]
@@ -78,7 +78,7 @@ extension EndPoint : TargetType{
             return ["passType": passType]
         case .putPass(let pass):
             if let passParams = pass.pass {
-                let params = ["passType": pass.passType, "serialNumber": pass.serialNumber as Any, "pass": passParams] as [String : Any]
+                let params = ["passTemplate": pass.passType, "serialNumber": pass.serialNumber as Any, "pass": passParams] as [String : Any]
                 return params
             }else {
                 return [:]
