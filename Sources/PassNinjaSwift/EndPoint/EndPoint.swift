@@ -13,6 +13,7 @@ enum EndPoint{
     case createPass(pass: PassRequest)
     case getPass(passType: String, serialNumber: String)
     case putPass(pass: PassRequest)
+    case patchPass(pass: PassRequest)
     case deletePass(passType: String, serialNumber: String)
     case getPassTypeKeys(passType: String)
 }
@@ -38,6 +39,8 @@ extension EndPoint : TargetType{
             return "/passes/\(passType)/\(serialNumber)"
         case .putPass(let pass):
             return "/passes/\(pass.passType)/\(pass.serialNumber!)"
+        case .patchPass(let pass):
+            return "/passes/\(pass.passType)/\(pass.serialNumber!)"
         case .deletePass(let passType, let serialNumber):
             return "/passes/\(passType)/\(serialNumber)"
         case .getPassTypeKeys(let passType):
@@ -53,6 +56,8 @@ extension EndPoint : TargetType{
             return .get
         case .putPass:
             return .put
+        case .patchPass:
+            return .patch
         case .deletePass:
             return .delete
         }
@@ -83,6 +88,13 @@ extension EndPoint : TargetType{
             }else {
                 return [:]
             }
+        case .patchPass(let pass):
+            if let passParams = pass.pass {
+                let params = ["passTemplate": pass.passType, "serialNumber": pass.serialNumber as Any, "pass": passParams] as [String : Any]
+                return params
+            }else {
+                return [:]
+            }
         case .deletePass(let passType, let serialNumber):
             return ["passType": passType,
                     "serialNumber": serialNumber]
@@ -101,7 +113,7 @@ extension EndPoint : TargetType{
                 print("Parameters not converted with error: \(error)")
             }
             return .requestData(parameterData)
-        case .putPass:
+        case .putPass, .patchPass:
             var parameterData = Data()
             do {
                 parameterData = try JSONSerialization.data(withJSONObject: parameters!, options: [])
@@ -116,7 +128,7 @@ extension EndPoint : TargetType{
     
     var headers: [String : String]? {
         switch  self {
-        case .createPass, .getPass, .putPass, .deletePass, .getPassTypeKeys, .getPassTemplate:
+        case .createPass, .getPass, .putPass, .patchPass, .deletePass, .getPassTypeKeys, .getPassTemplate:
             var header = ["Content-Type": "application/json"]
             header["x-account-id"] = passAccountId
             header["x-api-key"] = passApiKey
