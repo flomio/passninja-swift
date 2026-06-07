@@ -73,21 +73,21 @@ public struct CreatePass : Codable {
 public struct Pass : Codable {
     
     public let pass : PassResponse?
-    public let passType : String?
+    public let passTemplate : String?
     public let serialNumber : String?
     public let urls : PassUrl?
-    
+
     enum CodingKeys: String, CodingKey {
         case pass = "pass"
-        case passType = "passType"
+        case passTemplate = "passTemplate"
         case serialNumber = "serialNumber"
         case urls = "urls"
     }
-    
+
     public init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         pass = try values.decodeIfPresent(PassResponse.self, forKey: .pass)
-        passType = try values.decodeIfPresent(String.self, forKey: .passType)
+        passTemplate = try values.decodeIfPresent(String.self, forKey: .passTemplate)
         serialNumber = try values.decodeIfPresent(String.self, forKey: .serialNumber)
         urls = try values.decodeIfPresent(PassUrl.self, forKey: .urls)
     }

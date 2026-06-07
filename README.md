@@ -70,7 +70,7 @@ deleting passes via the PassNinja api. The methods are outlined below.
 ```swift
 PassClient.shared.createPass(pass: PassRequest(passType: "demo.coupon", pass: [discount: '50%', memberName: 'John']), onSuccess: { (pass) in
     print(pass.urls as Any)
-    print(pass.passType as Any)
+    print(pass.passTemplate as Any)
     print(pass.serialNumber as Any)
     print(pass.pass?.logoText as Any)
     print(pass.pass?.descriptionField as Any)
@@ -85,7 +85,7 @@ PassClient.shared.createPass(pass: PassRequest(passType: "demo.coupon", pass: [d
 ```swift
 PassClient.shared.getPass(passType: "demo.coupon", serialNumber: "#Your pass serial number", onSuccess: { (pass) in
     print(pass.urls as Any)
-    print(pass.passType as Any)
+    print(pass.passTemplate as Any)
     print(pass.serialNumber as Any)
     print(pass.pass?.logoText as Any)
     print(pass.pass?.descriptionField as Any)
@@ -112,7 +112,7 @@ PassClient.shared.getPassTemplate(passType: "demo.coupon", onSuccess: { (passTem
 ```swift
 PassClient.shared.putPass(pass: PassRequest(passType: "demo.coupon", pass: ["passTitle": "Example passTitleValue", "logoText": "Example logoTextValue", "organizationName": "Example organizationNameValue", "description": "Example descriptionValue"], serialNumber: "#Your pass serial number"), onSuccess: { (pass) in
     print(pass.urls as Any)
-    print(pass.passType as Any)
+    print(pass.passTemplate as Any)
     print(pass.serialNumber as Any)
     print(pass.pass?.logoText as Any)
     print(pass.pass?.descriptionField as Any)

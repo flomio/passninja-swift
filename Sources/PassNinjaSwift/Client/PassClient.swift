@@ -35,9 +35,6 @@ open class PassClient {
                 onError(commonError())
             }
         }
-        if let error = error {
-            onError(error)
-        }
     }
 
     public func createPass(pass: PassRequest,
@@ -155,6 +152,40 @@ open class PassClient {
         }
     }
     
+    public func patchPass(pass: PassRequest,
+                          onSuccess: @escaping (_ response: Pass) -> Void,
+                          onError: @escaping (_ error: PassNinjaError?) -> Void) {
+        let isValidRequest = validatePass(passType: pass.passType, serialNumber: pass.serialNumber, endPointType: .Put)
+        var error: PassNinjaError?
+        if let message = checkMissingAccountIdanApiKey() {
+            error = try! PassNinjaError(message: message, statusCode: 500)
+        }else if !isValidRequest{
+            error = try! PassNinjaError(message: "Please enter a valid pass type and serial number", statusCode: 500)
+        }else {
+            provider.request(.patchPass(pass: pass)) { result in
+                switch result{
+                case .success(let response):
+                    do {
+                        if response.statusCode == 200 {
+                            let pass = try JSONDecoder().decode(Pass.self, from: response.data)
+                            onSuccess(pass)
+                        } else {
+                            let error = try JSONDecoder().decode(PassNinjaError.self, from: response.data)
+                            onError(error)
+                        }
+                    } catch {
+                        onError(commonError())
+                    }
+                case.failure:
+                    onError(commonError())
+                }
+            }
+        }
+        if let error = error {
+            onError(error)
+        }
+    }
+
     public func deletePass(passType: String,
                            serialNumber: String,
                            clientPassData: [String: Any],
