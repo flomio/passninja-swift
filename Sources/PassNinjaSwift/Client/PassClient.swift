@@ -35,9 +35,6 @@ open class PassClient {
                 onError(commonError())
             }
         }
-        if let error = error {
-            onError(error)
-        }
     }
 
     public func createPass(pass: PassRequest,
