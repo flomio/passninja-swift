@@ -11,6 +11,7 @@ import Moya
 
 enum EndPoint{
     case createPass(pass: PassRequest)
+    case getPassTemplate(passType: String)
     case getPass(passType: String, serialNumber: String)
     case putPass(pass: PassRequest)
     case patchPass(pass: PassRequest)
